@@ -136,42 +136,29 @@ const quotes = [
 
 ];
 
-
-
-let shuffledQuotes = [];
-let currentQuoteIndex = 0;
-
-// Fisher-Yates Shuffle Algorithm
-function shuffleQuotes() {
-  shuffledQuotes = [...quotes];
-  for (let i = shuffledQuotes.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffledQuotes[i], shuffledQuotes[j]] = [shuffledQuotes[j], shuffledQuotes[i]];
-  }
-  currentQuoteIndex = 0;
-}
+let currentIndex = 0;
 
 function displayNextQuote() {
-  if (shuffledQuotes.length === 0) shuffleQuotes();
+  const quote = quotes[currentIndex];
 
-  const quote = shuffledQuotes[currentQuoteIndex];
   document.getElementById("quote").innerText = quote.text;
   document.getElementById("author").innerText = `— ${quote.author}`;
 
-  // Trigger fade-in animation
+  // Animation effect (fade-in)
   const box = document.querySelector(".quote-box");
   box.classList.remove("fade-in");
   void box.offsetWidth;
   box.classList.add("fade-in");
 
-  currentQuoteIndex++;
+  currentIndex++;
 
-  // Reshuffle when we reach the end
-  if (currentQuoteIndex >= shuffledQuotes.length) {
-    shuffleQuotes();
+  // If reached end, start from first quote again
+  if (currentIndex >= quotes.length) {
+    currentIndex = 0;
   }
 }
 
+// Theme toggle function (Dark/Light Mode)
 function toggleTheme() {
   document.body.classList.toggle("dark-mode");
 }
@@ -186,6 +173,5 @@ document.addEventListener("keydown", function(event) {
   }
 });
 
-// Initial shuffle and first quote
-shuffleQuotes();
+// Show first quote on page load
 displayNextQuote();
