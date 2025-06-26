@@ -3,7 +3,7 @@ let usedIndexes = new Set();
 let currentQuote = "";
 let currentAuthor = "";
 
-// Fetch more quotes (let's get first 3 pages = ~300 quotes)
+// Fetch around 300 quotes (3 pages, 100 quotes per page)
 async function fetchQuotesList() {
   let allQuotes = [];
   for (let page = 1; page <= 3; page++) {
