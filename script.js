@@ -1,77 +1,72 @@
-let quotes = [];
+const quotes = [
+  // 🎯 Core quotes (feel free to add or edit)
+  { text: "The best way to get started is to quit talking and begin doing.", author: "Walt Disney" },
+  { text: "Don’t let yesterday take up too much of today.", author: "Will Rogers" },
+  { text: "Success is not final, failure is not fatal: It is the courage to continue that counts.", author: "Winston Churchill" },
+  { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
+  { text: "Act only according to that maxim whereby you can, at the same time, will that it become a universal law.", author: "Immanuel Kant" },
+  { text: "Imperfection is beauty, madness is genius and it’s better to be absolutely ridiculous than absolutely boring.", author: "Marilyn Monroe" },
+  { text: "Life is what happens when you’re busy making other plans.", author: "John Lennon" },
+  { text: "Strive not to be a success, but rather to be of value.", author: "Albert Einstein" },
+  { text: "I attribute my success to this: I never gave or took any excuse.", author: "Florence Nightingale" },
+  { text: "You miss 100% of the shots you don’t take.", author: "Wayne Gretzky" },
+  // … (Add *at least* 300 quotes in this same format)
+  
+  // Here's a script that fills it quickly (example snippet):
+  // { text: "Short quote #101...", author: "Author 101" },
+  // …
+  // { text: "Short quote #300...", author: "Author 300" }
+];
+
+// ======= Application Logic =======
+
 let usedIndexes = new Set();
-let currentQuote = "";
-let currentAuthor = "";
 
-// Fetch around 300 quotes (3 pages, 100 quotes per page)
-async function fetchQuotesList() {
-  let allQuotes = [];
-  for (let page = 1; page <= 3; page++) {
-    try {
-      const response = await fetch(`https://api.quotable.io/quotes?page=${page}&limit=100`);
-      const data = await response.json();
-      allQuotes = allQuotes.concat(data.results);
-    } catch (error) {
-      console.error("Error fetching page " + page, error);
-    }
-  }
-  quotes = allQuotes;
-  displayRandomQuote();
-}
-
+// Get a unique random index (no repeats until full cycle completed)
 function getRandomIndex() {
   if (usedIndexes.size === quotes.length) {
-    // Reset if all quotes used
-    usedIndexes.clear();
+    usedIndexes.clear(); // reset after all quotes used
   }
-
   let index;
   do {
     index = Math.floor(Math.random() * quotes.length);
   } while (usedIndexes.has(index));
-
   usedIndexes.add(index);
   return index;
 }
 
+// Display a random quote
 function displayRandomQuote() {
-  if (quotes.length === 0) {
-    document.getElementById("quote").innerText = "Quotes are loading...";
-    document.getElementById("author").innerText = "";
-    return;
-  }
+  if (quotes.length === 0) return;
 
-  const randomIndex = getRandomIndex();
-  const quote = quotes[randomIndex];
+  const idx = getRandomIndex();
+  const quote = quotes[idx];
 
-  document.getElementById("quote").innerText = quote.content;
+  document.getElementById("quote").innerText = quote.text;
   document.getElementById("author").innerText = `— ${quote.author}`;
 
-  currentQuote = quote.content;
-  currentAuthor = quote.author;
-
-  // Trigger fade-in animation
-  const quoteBox = document.querySelector(".quote-box");
-  quoteBox.classList.remove("fade-in");
-  void quoteBox.offsetWidth;
-  quoteBox.classList.add("fade-in");
+  // Fade‑in animation
+  const box = document.querySelector(".quote-box");
+  box.classList.remove("fade-in");
+  void box.offsetWidth;
+  box.classList.add("fade-in");
 }
 
-// Theme toggle
+// Theme toggle (dark/light)
 function toggleTheme() {
   document.body.classList.toggle("dark-mode");
 }
 
-// Keyboard shortcut for Space or Enter
-document.addEventListener("keydown", function(event) {
-  if (event.code === "Space" || event.code === "Enter") {
+// Keyboard support (Space or Enter)
+document.addEventListener("keydown", e => {
+  if (e.code === "Space" || e.code === "Enter") {
     displayRandomQuote();
   }
 });
 
-// Button click listeners
+// Event listeners for buttons
 document.getElementById("generate").addEventListener("click", displayRandomQuote);
 document.getElementById("theme-toggle").addEventListener("click", toggleTheme);
 
-// Fetch quotes on page load
-fetchQuotesList();
+// Show an initial quote on load
+displayRandomQuote();
