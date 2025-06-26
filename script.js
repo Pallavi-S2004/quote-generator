@@ -144,7 +144,7 @@ function displayNextQuote() {
   document.getElementById("quote").innerText = quote.text;
   document.getElementById("author").innerText = `— ${quote.author}`;
 
-  // Animation effect (fade-in)
+  // Fade-in animation
   const box = document.querySelector(".quote-box");
   box.classList.remove("fade-in");
   void box.offsetWidth;
@@ -152,13 +152,11 @@ function displayNextQuote() {
 
   currentIndex++;
 
-  // If reached end, start from first quote again
   if (currentIndex >= quotes.length) {
-    currentIndex = 0;
+    currentIndex = 0; // Restart after reaching end
   }
 }
 
-// Theme toggle function (Dark/Light Mode)
 function toggleTheme() {
   document.body.classList.toggle("dark-mode");
 }
@@ -173,5 +171,5 @@ document.addEventListener("keydown", function(event) {
   }
 });
 
-// Show first quote on page load
+// Display first quote on load
 displayNextQuote();
