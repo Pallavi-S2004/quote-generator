@@ -52,55 +52,54 @@ const quotes = [
 ];
 
 
-// ======= Application Logic =======
+let shuffledQuotes = [];
+let currentQuoteIndex = 0;
 
-let usedIndexes = new Set();
-
-// Get a unique random index (no repeats until full cycle completed)
-function getRandomIndex() {
-  if (usedIndexes.size === quotes.length) {
-    usedIndexes.clear(); // reset after all quotes used
+// Fisher-Yates Shuffle Algorithm
+function shuffleQuotes() {
+  shuffledQuotes = [...quotes];
+  for (let i = shuffledQuotes.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffledQuotes[i], shuffledQuotes[j]] = [shuffledQuotes[j], shuffledQuotes[i]];
   }
-  let index;
-  do {
-    index = Math.floor(Math.random() * quotes.length);
-  } while (usedIndexes.has(index));
-  usedIndexes.add(index);
-  return index;
+  currentQuoteIndex = 0;
 }
 
-// Display a random quote
-function displayRandomQuote() {
-  if (quotes.length === 0) return;
+function displayNextQuote() {
+  if (shuffledQuotes.length === 0) shuffleQuotes();
 
-  const idx = getRandomIndex();
-  const quote = quotes[idx];
-
+  const quote = shuffledQuotes[currentQuoteIndex];
   document.getElementById("quote").innerText = quote.text;
   document.getElementById("author").innerText = `— ${quote.author}`;
 
-  // Fade‑in animation
+  // Trigger fade-in animation
   const box = document.querySelector(".quote-box");
   box.classList.remove("fade-in");
   void box.offsetWidth;
   box.classList.add("fade-in");
+
+  currentQuoteIndex++;
+
+  // Reshuffle when we reach the end
+  if (currentQuoteIndex >= shuffledQuotes.length) {
+    shuffleQuotes();
+  }
 }
 
-// Theme toggle (dark/light)
 function toggleTheme() {
   document.body.classList.toggle("dark-mode");
 }
 
-// Keyboard support (Space or Enter)
-document.addEventListener("keydown", e => {
-  if (e.code === "Space" || e.code === "Enter") {
-    displayRandomQuote();
+// Event listeners
+document.getElementById("generate").addEventListener("click", displayNextQuote);
+document.getElementById("theme-toggle").addEventListener("click", toggleTheme);
+
+document.addEventListener("keydown", function(event) {
+  if (event.code === "Space" || event.code === "Enter") {
+    displayNextQuote();
   }
 });
 
-// Event listeners for buttons
-document.getElementById("generate").addEventListener("click", displayRandomQuote);
-document.getElementById("theme-toggle").addEventListener("click", toggleTheme);
-
-// Show an initial quote on load
-displayRandomQuote();
+// Initial shuffle and first quote
+shuffleQuotes();
+displayNextQuote();
