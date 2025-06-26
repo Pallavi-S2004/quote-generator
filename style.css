@@ -14,7 +14,7 @@ body {
   padding: 30px;
   background: white;
   border-radius: 15px;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 h1 {
@@ -83,4 +83,5 @@ body.dark-mode .quote-box {
 body.dark-mode .buttons button {
   background-color: #bb86fc;
 }
+
 
