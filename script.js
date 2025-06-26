@@ -1,34 +1,52 @@
 let quotes = [];
+let usedIndexes = new Set();
 let currentQuote = "";
 let currentAuthor = "";
 
-// Fetch a large list of quotes once (100 quotes)
-function fetchQuotesList() {
-  fetch('https://api.quotable.io/quotes?limit=100')
-    .then(response => response.json())
-    .then(data => {
-      quotes = data.results;
-      displayRandomQuote();
-    })
-    .catch(error => {
-      console.error("Error fetching quotes:", error);
-      document.getElementById("quote").innerText = "Failed to load quotes.";
-      document.getElementById("author").innerText = "";
-    });
+// Fetch more quotes (let's get first 3 pages = ~300 quotes)
+async function fetchQuotesList() {
+  let allQuotes = [];
+  for (let page = 1; page <= 3; page++) {
+    try {
+      const response = await fetch(`https://api.quotable.io/quotes?page=${page}&limit=100`);
+      const data = await response.json();
+      allQuotes = allQuotes.concat(data.results);
+    } catch (error) {
+      console.error("Error fetching page " + page, error);
+    }
+  }
+  quotes = allQuotes;
+  displayRandomQuote();
+}
+
+function getRandomIndex() {
+  if (usedIndexes.size === quotes.length) {
+    // Reset if all quotes used
+    usedIndexes.clear();
+  }
+
+  let index;
+  do {
+    index = Math.floor(Math.random() * quotes.length);
+  } while (usedIndexes.has(index));
+
+  usedIndexes.add(index);
+  return index;
 }
 
 function displayRandomQuote() {
   if (quotes.length === 0) {
-    document.getElementById("quote").innerText = "Quotes list is empty.";
+    document.getElementById("quote").innerText = "Quotes are loading...";
     document.getElementById("author").innerText = "";
     return;
   }
 
-  const randomIndex = Math.floor(Math.random() * quotes.length);
+  const randomIndex = getRandomIndex();
   const quote = quotes[randomIndex];
 
   document.getElementById("quote").innerText = quote.content;
   document.getElementById("author").innerText = `— ${quote.author}`;
+
   currentQuote = quote.content;
   currentAuthor = quote.author;
 
@@ -55,5 +73,5 @@ document.addEventListener("keydown", function(event) {
 document.getElementById("generate").addEventListener("click", displayRandomQuote);
 document.getElementById("theme-toggle").addEventListener("click", toggleTheme);
 
-// Fetch quotes list on page load
+// Fetch quotes on page load
 fetchQuotesList();
